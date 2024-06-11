@@ -21,17 +21,18 @@ class UserListScreen extends StatelessWidget {
       appBar: AppBar(
           backgroundColor: CustColors.secondaryColor,
           title: Text('User List',style: GoogleFonts.poppins(fontWeight: FontWeight.w500,fontSize: 18),)),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: CustColors.primaryColor,
-          onPressed: (){
-            Get.to(()=>FormScreen());
-          },
-          label: Text("Add New",style: GoogleFonts.poppins(color: Colors.white),)),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
-            return ListView.builder(
+            return
+              snapshot.data!.docs.length==0?Center(child: FloatingActionButton.extended(
+                  backgroundColor: CustColors.primaryColor,
+                  onPressed: (){
+                    Get.to(()=>FormScreen());
+                  },
+                  label: Text("Add Information",style: GoogleFonts.poppins(color: Colors.white),)),):
+              ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 var user = UserModel.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
@@ -70,33 +71,4 @@ class UserListScreen extends StatelessWidget {
       ),
     );
   }
-
-  Future<void> _downloadPdf(UserModel user) async {
-    try {
-      final pdf = await userController.generatePdf(user);
-      final pdfBytes = await pdf.save();
-      final directory = await getApplicationDocumentsDirectory();
-      final pdfFile = File('${directory.path}/user_info_${user.id}.pdf');
-      await pdfFile.writeAsBytes(pdfBytes);
-
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(
-          content: Text('PDF Downloaded'),
-          action: SnackBarAction(
-            label: 'Open',
-            onPressed: () {
-              // Open the PDF file
-              Process.run('open', [pdfFile.path]);
-            },
-          ),
-        ),
-      );
-    } catch (error) {
-      print('Error downloading PDF: $error');
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(
-          content: Text('Failed to download PDF'),
-        ),
-      );
-    }
-  }}
+}

@@ -5,7 +5,9 @@ import 'package:personal_info_app_bb2/utils/colors.dart';
 import '../controllers/user_controller.dart';
 
 class FormScreen extends StatelessWidget {
+  FormScreen({super.key});
   final UserController userController = Get.put(UserController());
+
 
   @override
   Widget build(BuildContext context) {
@@ -14,31 +16,33 @@ class FormScreen extends StatelessWidget {
           backgroundColor: CustColors.secondaryColor.withAlpha(100),
           title: Text('User Information',style: GoogleFonts.poppins(fontWeight: FontWeight.w500,fontSize: 18,color: Colors.black),)),
       body: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Card(
           elevation: 5,
           surfaceTintColor: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Form(
+            child: Obx(()=>Form(
               key: userController.formKey,
               child: ListView(
                 children: [
+                  userController.isLoading.value?const LinearProgressIndicator():Container(),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     controller: userController.nameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Name',
-                      border: OutlineInputBorder()
+                        border: OutlineInputBorder()
                     ),
                     validator: (value) {
                       if (value!.isEmpty) return 'Please enter your name';
                       return null;
                     },
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     controller: userController.ageController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Age',
                         border: OutlineInputBorder()
                     ),
@@ -48,11 +52,11 @@ class FormScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
 
                   TextFormField(
                     controller: userController.emailController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder()
                     ),
@@ -61,11 +65,11 @@ class FormScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
 
                   TextFormField(
                     controller: userController.dobController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Date of Birth',
                         border: OutlineInputBorder()
 
@@ -76,11 +80,11 @@ class FormScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
 
                   TextFormField(
                     controller: userController.genderController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Gender',
                         border: OutlineInputBorder()
 
@@ -90,11 +94,11 @@ class FormScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
 
                   TextFormField(
                     controller: userController.employmentStatusController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Employment Status',
                         border: OutlineInputBorder()
                     ),
@@ -103,11 +107,11 @@ class FormScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
 
                   TextFormField(
                     controller: userController.employeeAddressController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Employee Address',
                         border: OutlineInputBorder()
 
@@ -117,7 +121,7 @@ class FormScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: CustColors.primaryColor),
                     onPressed: () {
@@ -129,7 +133,7 @@ class FormScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            )),
           ),
         ),
       ),

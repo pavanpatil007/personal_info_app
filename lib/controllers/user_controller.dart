@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:personal_info_app_bb2/screens/user_list_screen.dart';
 import 'package:printing/printing.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,11 +20,14 @@ class UserController extends GetxController {
   final genderController = TextEditingController();
   final employmentStatusController = TextEditingController();
   final employeeAddressController = TextEditingController();
+  RxBool isLoading = false.obs;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   UserModel? _currentUser;
 
   Future<void> submitData() async {
+    isLoading.value = true;
+    update();
     if (_currentUser != null) {
       // Update existing user
       final user = _currentUser!.copyWith(
@@ -41,10 +45,14 @@ class UserController extends GetxController {
 
       // Generate and upload new PDF
       final pdf = await generatePdf(user);
-      await _uploadPdfToSftp(user, pdf);
+      try{
+        await _uploadPdfToSftp(user, pdf);
+      }catch(e){
+        print(e);
+      }
 
       // Update local state
-      _currentUser = user;
+      _currentUser = null;
       update();
     } else {
       // Add new user
@@ -69,12 +77,17 @@ class UserController extends GetxController {
       final pdf = await generatePdf(user);
 
       // Upload to SFTP
-      await _uploadPdfToSftp(user, pdf);
+      try{
+        await _uploadPdfToSftp(user, pdf);
 
-      // Update local state
-      _currentUser = user;
+      }catch(e){
+        print(e);
+      }
       update();
     }
+    isLoading.value = false;
+    Get.to(()=>UserListScreen());
+    update();
   }
 
   Future<pw.Document> generatePdf(UserModel user) async {
